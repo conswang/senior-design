@@ -1,1 +1,5 @@
 jikanpy-v4
+requests
+python-dotenv
+flask
+jsonify
