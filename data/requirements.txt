@@ -3,3 +3,6 @@ requests
 python-dotenv
 flask
 jsonify
+pandas
+pydash
+google-cloud-translate==2.0.1
