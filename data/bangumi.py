@@ -4,9 +4,13 @@ import pandas as pd
 
 SEARCH_URL = "https://api.bgm.tv/v0/search/subjects"
 MAX_LIMIT = 50
-OUT_FILE = "./results/out.csv"
+OUT_FILE = "./results/bangumiList.csv"
 
+# adjust these to get data in chunks of less than 1000 to avoid # of search result return cap
+# buckets used: 7-11, 6-7, 5-6, 0-5
 offset = 0
+RATING_HIGH = 5
+RATING_LOW = 0
 
 payload = json.dumps({
   "filter": {
@@ -16,8 +20,13 @@ payload = json.dumps({
     "tag": [
       "国产"
     ],
+    "rating": [
+      f">={RATING_LOW}",
+      f"<{RATING_HIGH}"
+    ],
     "nsfw": True
-  }
+  },
+  "sort": "score"
 })
 headers = {
   'User-Agent': 'conswang/senior-design',
@@ -32,7 +41,7 @@ def pickAttributes(show: dict) -> dict:
     'score': show.get('score')
   }
 
-while offset < 2000:
+while offset < 500:
   print(f'Fetching shows from {offset}-{offset + MAX_LIMIT}')
 
   urlWithParams = f'{SEARCH_URL}?limit={MAX_LIMIT}&offset={offset}'
