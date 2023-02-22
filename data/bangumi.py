@@ -3,10 +3,10 @@ import json
 import pandas as pd
 
 SEARCH_URL = "https://api.bgm.tv/v0/search/subjects"
-MAX_LIMIT = 100
-OUT_FILE = "out.csv"
+MAX_LIMIT = 50
+OUT_FILE = "./results/out.csv"
 
-offset = 1000
+offset = 0
 
 payload = json.dumps({
   "filter": {
@@ -32,7 +32,7 @@ def pickAttributes(show: dict) -> dict:
     'score': show.get('score')
   }
 
-while offset < 1100:
+while offset < 2000:
   print(f'Fetching shows from {offset}-{offset + MAX_LIMIT}')
 
   urlWithParams = f'{SEARCH_URL}?limit={MAX_LIMIT}&offset={offset}'
@@ -48,12 +48,15 @@ while offset < 1100:
 
     data = map(pickAttributes, resJson.get('data'))
     df = pd.json_normalize(data)
+
+    if len(df) != MAX_LIMIT:
+      print(f'Got less than expected shows (only {len(df)} shows)')
+
     df.to_csv(OUT_FILE, mode='a', index=False, header=False)
   else:
     print(res)
     exit()
 
   # print(res.text)
-  print(res.text)
 
   offset += MAX_LIMIT
