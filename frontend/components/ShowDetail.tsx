@@ -100,7 +100,7 @@ export default function ShowDetail({ donghua }: ShowDetailProps) {
       <Typography.Title>{displayTitle}</Typography.Title>
       <Row>
         <Col span={6}>
-          <Image src={donghua.imageUrl} width={225} preview={false} />
+          <Image src={donghua.imageUrl!} width={225} preview={false} />
           <Divider />
           <Space direction="vertical" size="small">
             {leftColumnElements}
