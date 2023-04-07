@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Donghua {
+  id            Int               @id @default(autoincrement())
+  titleEnglish  String?           @db.VarChar(200)
+  titleChinese  String?           @db.VarChar(200)
+  summary       String?           @db.VarChar(5000)
+  nsfw          Boolean?
+  platform      Donghua_platform?
+  startDate     String?           @db.VarChar(10)
+  endDate       String?           @db.VarChar(10)
+  source        String?           @db.VarChar(50)
+  episodeLength String?           @db.VarChar(50)
+  bangumiId     Int?
+  bangumiRank   Int?
+  bangumiScore  Float?
+  malId         Int?
+  malRank       Int?
+  malScore      Float?
+}
+
+enum Donghua_platform {
+  TV
+  Web
+}
