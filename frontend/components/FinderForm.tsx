@@ -15,12 +15,18 @@ import {
 export default function FinderForm() {
   // const { data, error, isLoading } = useSWR<Donghua[]>("/api/search");
 
+  // const {mutate} = useSWR<Donghua[]>(`/api/search/q=${query.search}`);
+
   const [form] = Form.useForm();
 
   const onFinish = (fieldsValue: any) => {
-    const query = fieldsValue["input"];
-    const donghuaList = useSWR<Donghua[]>("/api/search");
-    console.log(donghuaList);
+    const query = fieldsValue["query"];
+
+    fetch(`/api/search?q=${query}`).then((res) => {
+      return res.json()
+    }).then((data: Donghua[]) => {
+      console.log(data)
+    })
   };
 
   return (
