@@ -96,7 +96,7 @@ export default function ShowDetail({ donghua }: ShowDetailProps) {
   });
 
   return (
-    <>
+    <Space direction="vertical" size="large" style={{width: "100%"}}>
       <Typography.Title>{displayTitle}</Typography.Title>
       <Row>
         <Col span={6}>
@@ -114,12 +114,12 @@ export default function ShowDetail({ donghua }: ShowDetailProps) {
             <div>
               <Typography.Title level={3}>Synopsis</Typography.Title>
               <Typography.Paragraph>
-                {donghua.summaryEnglish}
+                {donghua.summaryEnglish?.replace(/(&quot\;)/g,"\"")}
               </Typography.Paragraph>
             </div>
           </Space>
         </Col>
       </Row>
-    </>
+    </Space>
   );
 }
