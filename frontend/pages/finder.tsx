@@ -1,5 +1,10 @@
+import AppLayout from "@/components/AppLayout";
 import FinderForm from "@/components/FinderForm";
 
 export default function ShowFinder() {
-  return <FinderForm/>
+  return (
+    <AppLayout>
+      <FinderForm />
+    </AppLayout>
+  );
 }

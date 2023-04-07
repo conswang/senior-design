@@ -1,3 +1,5 @@
+import AppLayout from "@/components/AppLayout";
+import ShowDetail from "@/components/ShowDetail";
 import { PrismaClient, Donghua } from "@prisma/client";
 import { Space } from "antd";
 import { GetServerSidePropsContext } from "next";
@@ -8,7 +10,9 @@ interface DetailProps {
 
 export default function Detail({ donghua }: DetailProps) {
   return (
-    <Space direction="vertical">{`${donghua.id} lalalala ${donghua.titleChinese}`}</Space>
+    <AppLayout>
+      <ShowDetail donghua={donghua}/>
+    </AppLayout>
   );
 }
 
