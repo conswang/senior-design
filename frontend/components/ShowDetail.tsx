@@ -1,40 +1,11 @@
-import { Donghua, Donghua_platform } from "@prisma/client";
+import { Donghua } from "@prisma/client";
 import { Col, Row, Space, Image, Typography, Divider } from "antd";
-import pinyin from "pinyin";
+import { getDisplayPlatform, getDisplayTitle } from "./showUtil";
+import ShowCard from "./ShowCard";
 
 interface ShowDetailProps {
   donghua: Donghua;
 }
-
-const getDisplayTitle = (donghua: Donghua) => {
-  if (donghua.titleEnglish) {
-    return donghua.titleEnglish;
-  }
-  if (donghua.titleChinese) {
-    return pinyin(donghua.titleChinese, {
-      style: pinyin.STYLE_NORMAL,
-    })
-      .map(([word]) => {
-        return [word.charAt(0).toUpperCase() + word.slice(1)];
-      })
-      .join(" ");
-  }
-  return "Unknown Title";
-};
-
-const getDisplayPlatform = (platform: Donghua_platform | null): string => {
-  if (!platform) {
-    return "Unknown";
-  }
-  switch (platform) {
-    case "TV":
-      return "TV";
-    case "Web":
-      return "Web";
-    case "Unknown":
-      return "Unknown";
-  }
-};
 
 export default function ShowDetail({ donghua }: ShowDetailProps) {
   const displayTitle = getDisplayTitle(donghua);
@@ -122,6 +93,7 @@ export default function ShowDetail({ donghua }: ShowDetailProps) {
           </Space>
         </Col>
       </Row>
+      <Row><ShowCard donghua={donghua}/></Row>
     </Space>
   );
 }
