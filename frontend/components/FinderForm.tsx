@@ -11,6 +11,8 @@ import {
   Space,
   Switch,
 } from "antd";
+import { SearchFilter } from "@/types";
+import { useRouter } from "next/router";
 
 export default function FinderForm() {
   // const { data, error, isLoading } = useSWR<Donghua[]>("/api/search");
@@ -18,21 +20,24 @@ export default function FinderForm() {
   // const {mutate} = useSWR<Donghua[]>(`/api/search/q=${query.search}`);
 
   const [form] = Form.useForm();
+  const router = useRouter();
 
   const onFinish = (fieldsValue: any) => {
-    const query = fieldsValue["query"];
+    console.log(fieldsValue);
 
-    fetch(`/api/search?q=${query}`).then((res) => {
-      return res.json()
-    }).then((data: Donghua[]) => {
-      console.log(data)
-    })
+    let filter: SearchFilter = {
+      query: fieldsValue["query"],
+      includeNsfw: fieldsValue["include-nsfw"],
+    };
+
+    window.location.href = `/list?searchFilter=${JSON.stringify(filter)}`;
   };
 
   return (
     <Form
       labelCol={{ span: 4 }}
       wrapperCol={{ span: 20 }}
+      size="small"
       layout="horizontal"
       style={{ width: "100%" }}
       onFinish={onFinish}
@@ -40,15 +45,16 @@ export default function FinderForm() {
       <Form.Item label="Query" name="query">
         <Input />
       </Form.Item>
-      <Form.Item label="Air date">
+      <Form.Item label="Air date" name="air-date">
         <DatePicker.RangePicker />
       </Form.Item>
-      <Form.Item label="Include NSFW">
+      <Form.Item label="Include NSFW" name="include-nsfw">
         <Switch />
       </Form.Item>
       <Form.Item label="Number of episodes">
         <Form.Item
           label="min"
+          name="num-episodes-min"
           colon={false}
           style={{ display: "inline-block", marginRight: 12 }}
         >
@@ -56,6 +62,7 @@ export default function FinderForm() {
         </Form.Item>
         <Form.Item
           label="max"
+          name="num-episodes-max"
           colon={false}
           style={{ display: "inline-block" }}
         >
@@ -73,6 +80,7 @@ export default function FinderForm() {
       <Form.Item label="Score">
         <Form.Item
           label="min"
+          name="score-min"
           colon={false}
           style={{ display: "inline-block", marginRight: 12 }}
         >
@@ -80,6 +88,7 @@ export default function FinderForm() {
         </Form.Item>
         <Form.Item
           label="max"
+          name="score-max"
           colon={false}
           style={{ display: "inline-block" }}
         >

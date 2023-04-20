@@ -1,24 +1,25 @@
 import AppLayout from "@/components/AppLayout";
 import FinderForm from "@/components/FinderForm";
 import ShowList from "@/components/ShowList";
+import { SearchFilter } from "@/types";
 import { Donghua } from "@prisma/client";
 import { Collapse, Space, Typography } from "antd";
+import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-export default function List() {
+interface ListProps {
+  filterString: string;
+}
+
+export default function List({ filterString }: ListProps) {
   const router = useRouter();
   const [results, setResults] = useState<Donghua[]>();
-  let searchFilter = {};
-
-  if (typeof router.query?.searchFilter == "string") {
-    searchFilter = router.query?.searchFilter;
-  }
 
   useEffect(() => {
     fetch(`/api/search?`, {
       method: "post",
-      body: JSON.stringify(searchFilter),
+      body: filterString,
     })
       .then((res) => {
         if (!res.ok) {
@@ -44,4 +45,16 @@ export default function List() {
       </Space>
     </AppLayout>
   );
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const filterString = context.query?.searchFilter;
+
+  if (typeof filterString === "string") {
+    return { props: { filterString } };
+  }
+
+  return {
+    notFound: true,
+  };
 }

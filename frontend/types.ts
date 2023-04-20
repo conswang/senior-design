@@ -12,4 +12,7 @@ export interface SearchFilter {
   episodeLength?: Range;
   score?: Range;
   includeNsfw?: boolean;
+  // for pagination
+  offset?: number,
+  limit?: number,
 }
