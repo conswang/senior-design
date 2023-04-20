@@ -25,6 +25,7 @@ export default function AppLayout({ children }: LayoutProps) {
           Donghua DB
         </Typography.Title>
         <Menu
+          selectable={false}
           theme="dark"
           mode="horizontal"
           items={[

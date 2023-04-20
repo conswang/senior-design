@@ -54,7 +54,5 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     return { props: { filterString } };
   }
 
-  return {
-    notFound: true,
-  };
+  return {props: {filterString: "{}"}}
 }
