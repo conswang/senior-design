@@ -3,13 +3,16 @@ import { SearchFilter, SortBy } from "@/types";
 import { Donghua, Prisma, PrismaClient } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-type ResData = {
+export type SearchResData = {
   results: Donghua[];
+  total: number;
+  offset: number;
+  limit: number;
 };
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<ResData | { error: string }>
+  res: NextApiResponse<SearchResData | { error: string }>
 ) {
   if (req.method !== "POST") {
     res.status(400).json({ error: "unaccepted request method, use POST" });
@@ -100,14 +103,13 @@ export default async function handler(
       orderByFilter = { orderBy: { bangumiScore: "desc" } };
       break;
     case SortBy.AIR_DATE:
-      orderByFilter = { orderBy: { startDate: "desc" } }
+      orderByFilter = { orderBy: { startDate: "desc" } };
       break;
     default:
       break;
   }
 
-  const prisma = new PrismaClient();
-  const results = await prisma.donghua.findMany({
+  const whereFilter = {
     where: {
       AND: [
         queryFilter,
@@ -119,10 +121,26 @@ export default async function handler(
         platformFilter,
       ],
     },
-    skip: 0,
-    take: 10,
+  };
+
+  const prisma = new PrismaClient();
+  const results = await prisma.donghua.findMany({
+    ...whereFilter,
+    skip: filter.offset || 0,
+    take: filter.limit || 10,
     ...orderByFilter,
   });
 
-  res.status(200).json({ results });
+  const total = await prisma.donghua.count({
+    ...whereFilter,
+  });
+
+  res
+    .status(200)
+    .json({
+      results,
+      total,
+      offset: filter.offset || 0,
+      limit: filter.limit || 10,
+    });
 }

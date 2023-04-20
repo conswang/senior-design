@@ -10,6 +10,7 @@ import {
   Switch,
 } from "antd";
 import { SearchFilter, SortBy } from "@/types";
+import { useRouter } from "next/router";
 
 const dateToString = (date?: Date) => {
   if (!date) {
@@ -19,6 +20,7 @@ const dateToString = (date?: Date) => {
 };
 
 export default function FinderForm() {
+  const router = useRouter();
 
   const onFinish = (fieldsValue: any) => {
     console.log(fieldsValue);
@@ -44,7 +46,7 @@ export default function FinderForm() {
       sortBy: fieldsValue["sort-by"],
     };
 
-    window.location.href = `/list?searchFilter=${JSON.stringify(filter)}`;
+    router.push(`/list?searchFilter=${JSON.stringify(filter)}`);
   };
 
   return (

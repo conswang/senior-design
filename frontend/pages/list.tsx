@@ -5,16 +5,20 @@ import { SearchFilter } from "@/types";
 import { Donghua } from "@prisma/client";
 import { Collapse, Space, Typography } from "antd";
 import { GetServerSidePropsContext } from "next";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { SearchResData } from "./api/search";
 
 interface ListProps {
   filterString: string;
 }
 
 export default function List({ filterString }: ListProps) {
-  const router = useRouter();
-  const [results, setResults] = useState<Donghua[]>();
+  const [data, setData] = useState<SearchResData>({
+    results: [],
+    total: 0,
+    offset: 0,
+    limit: 10,
+  });
 
   useEffect(() => {
     fetch(`/api/search?`, {
@@ -28,9 +32,9 @@ export default function List({ filterString }: ListProps) {
         return res.json();
       })
       .then((data) => {
-        setResults(data.results);
+        setData(data);
       });
-  }, []);
+  }, [filterString]);
 
   return (
     <AppLayout>
@@ -41,18 +45,23 @@ export default function List({ filterString }: ListProps) {
             <FinderForm />
           </Collapse.Panel>
         </Collapse>
-        <ShowList showList={results} />
+        <ShowList
+          showList={data?.results}
+          total={data?.total}
+          offset={data?.offset}
+          limit={data?.limit}
+        />
       </Space>
     </AppLayout>
   );
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const filterString = context.query?.searchFilter;
+  const filterString = context.query.searchFilter;
 
   if (typeof filterString === "string") {
     return { props: { filterString } };
   }
 
-  return {props: {filterString: "{}"}}
+  return { props: { filterString: "{}" } };
 }
