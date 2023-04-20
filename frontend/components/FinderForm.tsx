@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   DatePicker,
   Form,
   Input,
@@ -8,19 +9,16 @@ import {
   Space,
   Switch,
 } from "antd";
-import { SearchFilter } from "@/types";
-import { useRouter } from "next/router";
+import { SearchFilter, SortBy } from "@/types";
 
 const dateToString = (date?: Date) => {
   if (!date) {
     return undefined;
   }
   return date.toISOString().substring(0, 10);
-}
+};
 
 export default function FinderForm() {
-  const [form] = Form.useForm();
-  const router = useRouter();
 
   const onFinish = (fieldsValue: any) => {
     console.log(fieldsValue);
@@ -28,8 +26,22 @@ export default function FinderForm() {
     let filter: SearchFilter = {
       query: fieldsValue["query"],
       includeNsfw: fieldsValue["include-nsfw"],
-      startDate: dateToString(fieldsValue["air-date"][0].$d),
-      endDate: dateToString(fieldsValue["air-date"][1].$d),
+      startDate: dateToString(
+        fieldsValue["air-date"] && fieldsValue["air-date"][0].$d
+      ),
+      endDate: dateToString(
+        fieldsValue["air-date"] && fieldsValue["air-date"][1].$d
+      ),
+      numEpisodes: {
+        min: fieldsValue["num-episodes-min"],
+        max: fieldsValue["num-episodes-max"],
+      },
+      score: {
+        min: fieldsValue["score-min"],
+        max: fieldsValue["score-max"],
+      },
+      includePlatforms: fieldsValue["platform"],
+      sortBy: fieldsValue["sort-by"],
     };
 
     window.location.href = `/list?searchFilter=${JSON.stringify(filter)}`;
@@ -60,7 +72,7 @@ export default function FinderForm() {
           colon={false}
           style={{ display: "inline-block", marginRight: 12 }}
         >
-          <InputNumber />
+          <InputNumber min={0} max={10000}  size="small"/>
         </Form.Item>
         <Form.Item
           label="max"
@@ -68,25 +80,30 @@ export default function FinderForm() {
           colon={false}
           style={{ display: "inline-block" }}
         >
-          <InputNumber />
+          <InputNumber min={0} max={10000}  size="small"/>
         </Form.Item>
       </Form.Item>
-      <Form.Item label="Platform">
-        <Radio.Group>
-          <Radio.Button value="tv">TV</Radio.Button>
-          <Radio.Button value="web">Web</Radio.Button>
-          <Radio.Button value="other">Other</Radio.Button>
-        </Radio.Group>
+      <Form.Item
+        label="Platform"
+        name="platform"
+        initialValue={["TV", "Web", "Unknown"]}
+      >
+        <Checkbox.Group
+          options={[
+            { label: "TV", value: "TV" },
+            { label: "Web", value: "Web" },
+            { label: "Other", value: "Unknown" },
+          ]}
+        />
       </Form.Item>
-
-      <Form.Item label="Score">
+      <Form.Item label="Score" >
         <Form.Item
           label="min"
           name="score-min"
           colon={false}
           style={{ display: "inline-block", marginRight: 12 }}
         >
-          <InputNumber />
+          <InputNumber min={0} max={10} size="small"/>
         </Form.Item>
         <Form.Item
           label="max"
@@ -94,10 +111,16 @@ export default function FinderForm() {
           colon={false}
           style={{ display: "inline-block" }}
         >
-          <InputNumber />
+          <InputNumber min={0} max={10} size="small"/>
         </Form.Item>
       </Form.Item>
-
+      <Form.Item label="Sort by" name="sort-by" initialValue="BEST_MATCH">
+        <Radio.Group>
+          <Radio.Button value={SortBy.BEST_MATCH}>Best Match</Radio.Button>
+          <Radio.Button value={SortBy.SCORE}>Score</Radio.Button>
+          <Radio.Button value={SortBy.AIR_DATE}>Air Date</Radio.Button>
+        </Radio.Group>
+      </Form.Item>
       <Form.Item label=" " colon={false}>
         <Button type="primary" htmlType="submit">
           Submit

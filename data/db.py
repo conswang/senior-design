@@ -46,7 +46,7 @@ for bangumiShow in showList:
 
   nsfw = bangumiShow['nsfw']
   platform = bangumiShow['platform']
-  if bangumiShow['platform'] != 'TV' and bangumiShow['platform'] != 'Web':
+  if bangumiShow['platform'] != 'TV' and bangumiShow['platform'] != 'WEB':
     platform = 'Unknown'
 
   bangumiId = bangumiShow['id']

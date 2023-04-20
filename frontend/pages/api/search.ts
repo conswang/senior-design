@@ -1,5 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { SearchFilter } from "@/types";
+import { SearchFilter, SortBy } from "@/types";
 import { Donghua, Prisma, PrismaClient } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -45,17 +45,39 @@ export default async function handler(
       }
     : {};
 
-  const startDateFilter = filter.startDate ? {
-    startDate: {
-      gte: filter.startDate
-    }
-  }: {};
+  const startDateFilter = filter.startDate
+    ? {
+        startDate: {
+          gte: filter.startDate,
+        },
+      }
+    : {};
 
-  const endDateFilter = filter.endDate ? {
-    endDate: {
-      lte: filter.endDate
-    }
-  }: {}
+  const endDateFilter = filter.endDate
+    ? {
+        endDate: {
+          lte: filter.endDate,
+        },
+      }
+    : {};
+
+  const episodeFilter = filter.numEpisodes
+    ? {
+        numEpisodes: {
+          ...(filter.numEpisodes.min && { gte: filter.numEpisodes.min }),
+          ...(filter.numEpisodes.max && { lte: filter.numEpisodes.max }),
+        },
+      }
+    : {};
+
+  const scoreFilter = filter.score
+    ? {
+        bangumiScore: {
+          ...(filter.score.min && { gte: filter.score.min }),
+          ...(filter.score.max && { lte: filter.score.max }),
+        },
+      }
+    : {};
 
   const nsfwFilter = filter.includeNsfw
     ? {}
@@ -63,13 +85,43 @@ export default async function handler(
         nsfw: false,
       };
 
+  const platformFilter = filter.includePlatforms
+    ? {
+        platform: {
+          in: filter.includePlatforms,
+        },
+      }
+    : {};
+
+  let orderByFilter = {};
+
+  switch (filter.sortBy) {
+    case SortBy.SCORE:
+      orderByFilter = { orderBy: { bangumiScore: "desc" } };
+      break;
+    case SortBy.AIR_DATE:
+      orderByFilter = { orderBy: { startDate: "desc" } }
+      break;
+    default:
+      break;
+  }
+
   const prisma = new PrismaClient();
   const results = await prisma.donghua.findMany({
     where: {
-      AND: [queryFilter, nsfwFilter, startDateFilter, endDateFilter],
+      AND: [
+        queryFilter,
+        nsfwFilter,
+        startDateFilter,
+        endDateFilter,
+        episodeFilter,
+        scoreFilter,
+        platformFilter,
+      ],
     },
     skip: 0,
     take: 10,
+    ...orderByFilter,
   });
 
   res.status(200).json({ results });

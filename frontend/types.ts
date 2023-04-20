@@ -1,17 +1,25 @@
+import { Donghua_platform } from "@prisma/client";
+
 type Range = {
   min?: number;
   max?: number;
 };
 
+export enum SortBy {
+  SCORE,
+  AIR_DATE,
+  BEST_MATCH,
+}
 export interface SearchFilter {
   query?: string;
-  tags?: Array<string>;
-  platform?: string;
+  tags?: string[];
   startDate?: string;
   endDate?: string;
-  episodeLength?: Range;
+  numEpisodes?: Range;
   score?: Range;
   includeNsfw?: boolean;
+  includePlatforms?: Donghua_platform[];
+  sortBy?: SortBy,
   // for pagination
   offset?: number,
   limit?: number,
