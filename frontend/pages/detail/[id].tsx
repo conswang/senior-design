@@ -1,7 +1,6 @@
 import AppLayout from "@/components/AppLayout";
 import ShowDetail from "@/components/ShowDetail";
 import { PrismaClient, Donghua } from "@prisma/client";
-import { Space } from "antd";
 import { GetServerSidePropsContext } from "next";
 
 interface DetailProps {

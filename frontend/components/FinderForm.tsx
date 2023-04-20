@@ -1,6 +1,3 @@
-import useSWR from "swr";
-
-import { Donghua } from "@prisma/client";
 import {
   Button,
   DatePicker,
@@ -14,11 +11,14 @@ import {
 import { SearchFilter } from "@/types";
 import { useRouter } from "next/router";
 
+const dateToString = (date?: Date) => {
+  if (!date) {
+    return undefined;
+  }
+  return date.toISOString().substring(0, 10);
+}
+
 export default function FinderForm() {
-  // const { data, error, isLoading } = useSWR<Donghua[]>("/api/search");
-
-  // const {mutate} = useSWR<Donghua[]>(`/api/search/q=${query.search}`);
-
   const [form] = Form.useForm();
   const router = useRouter();
 
@@ -28,6 +28,8 @@ export default function FinderForm() {
     let filter: SearchFilter = {
       query: fieldsValue["query"],
       includeNsfw: fieldsValue["include-nsfw"],
+      startDate: dateToString(fieldsValue["air-date"][0].$d),
+      endDate: dateToString(fieldsValue["air-date"][1].$d),
     };
 
     window.location.href = `/list?searchFilter=${JSON.stringify(filter)}`;

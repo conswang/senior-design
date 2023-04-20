@@ -13,7 +13,6 @@ export default function AppLayout({ children }: LayoutProps) {
       <Layout.Header style={{ padding: "0 20%" }}>
         <Typography.Title
           style={{
-            color: "white",
             margin: 0,
             paddingTop: 12,
             marginRight: 48,
@@ -22,7 +21,7 @@ export default function AppLayout({ children }: LayoutProps) {
           }}
           level={2}
         >
-          Donghua DB
+          <Link href={"/"}>Donghua DB</Link>
         </Typography.Title>
         <Menu
           selectable={false}

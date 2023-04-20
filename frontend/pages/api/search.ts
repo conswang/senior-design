@@ -45,6 +45,18 @@ export default async function handler(
       }
     : {};
 
+  const startDateFilter = filter.startDate ? {
+    startDate: {
+      gte: filter.startDate
+    }
+  }: {};
+
+  const endDateFilter = filter.endDate ? {
+    endDate: {
+      lte: filter.endDate
+    }
+  }: {}
+
   const nsfwFilter = filter.includeNsfw
     ? {}
     : {
@@ -54,7 +66,7 @@ export default async function handler(
   const prisma = new PrismaClient();
   const results = await prisma.donghua.findMany({
     where: {
-      AND: [queryFilter, nsfwFilter],
+      AND: [queryFilter, nsfwFilter, startDateFilter, endDateFilter],
     },
     skip: 0,
     take: 10,
