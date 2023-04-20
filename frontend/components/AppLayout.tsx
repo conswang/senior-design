@@ -1,4 +1,6 @@
 import { Layout, Menu, Typography } from "antd";
+import MenuItem from "antd/es/menu/MenuItem";
+import Link from "next/link";
 import { ReactNode } from "react";
 
 interface LayoutProps {
@@ -25,10 +27,16 @@ export default function AppLayout({ children }: LayoutProps) {
         <Menu
           theme="dark"
           mode="horizontal"
-          items={new Array(3).fill(null).map((_, index) => ({
-            key: String(index + 1),
-            label: `nav ${index + 1}`,
-          }))}
+          items={[
+            {
+              key: "list",
+              label: <Link href="/list">Shows</Link>,
+            },
+            {
+              key: "finder",
+              label: <Link href="/finder">Finder</Link>,
+            },
+          ]}
         />
       </Layout.Header>
       <Layout.Content style={{ padding: "0 20%", paddingBottom: "24px" }}>

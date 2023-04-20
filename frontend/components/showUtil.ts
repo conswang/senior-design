@@ -32,3 +32,18 @@ export const getDisplayPlatform = (
       return "Unknown";
   }
 };
+
+export const getDisplaySummary = (donghua: Donghua, limit?: number): string => {
+  let htmlStr = donghua.summaryEnglish || "";
+
+  if (limit && htmlStr.length > limit) {
+    htmlStr = htmlStr.substring(0, limit) + "...";
+  }
+
+  htmlStr = htmlStr.replace(/&lt;/g , "<");	 
+  htmlStr = htmlStr.replace(/&gt;/g , ">");     
+  htmlStr = htmlStr.replace(/&quot;/g , "\"");  
+  htmlStr = htmlStr.replace(/&#39;/g , "\'");   
+  htmlStr = htmlStr.replace(/&amp;/g , "&");
+  return htmlStr;
+}

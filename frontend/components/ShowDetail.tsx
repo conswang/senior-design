@@ -1,6 +1,6 @@
 import { Donghua } from "@prisma/client";
 import { Col, Row, Space, Image, Typography, Divider } from "antd";
-import { getDisplayPlatform, getDisplayTitle } from "./showUtil";
+import { getDisplayPlatform, getDisplaySummary, getDisplayTitle } from "./showUtil";
 import ShowCard from "./ShowCard";
 
 interface ShowDetailProps {
@@ -9,6 +9,7 @@ interface ShowDetailProps {
 
 export default function ShowDetail({ donghua }: ShowDetailProps) {
   const displayTitle = getDisplayTitle(donghua);
+  const displaySummary = getDisplaySummary(donghua);
 
   let leftColumnInfo: Array<{ name?: string; value: string }> = [
     {
@@ -87,13 +88,12 @@ export default function ShowDetail({ donghua }: ShowDetailProps) {
                 Synopsis
               </Typography.Title>
               <Typography.Paragraph>
-                {donghua.summaryEnglish?.replace(/(&quot\;)/g, '"')}
+                {displaySummary}
               </Typography.Paragraph>
             </div>
           </Space>
         </Col>
       </Row>
-      <Row><ShowCard donghua={donghua}/></Row>
     </Space>
   );
 }

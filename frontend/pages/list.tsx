@@ -1,10 +1,12 @@
 import AppLayout from "@/components/AppLayout";
+import FinderForm from "@/components/FinderForm";
 import ShowList from "@/components/ShowList";
 import { Donghua } from "@prisma/client";
+import { Collapse, Space, Typography } from "antd";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-export default function SearchResults() {
+export default function List() {
   const router = useRouter();
   const [results, setResults] = useState<Donghua[]>();
   let searchFilter = {};
@@ -31,7 +33,15 @@ export default function SearchResults() {
 
   return (
     <AppLayout>
-      <ShowList showList={results} />
+      <Space direction="vertical">
+        <Typography.Title>Shows</Typography.Title>
+        <Collapse>
+          <Collapse.Panel key="1" header="Sort and Filter">
+            <FinderForm />
+          </Collapse.Panel>
+        </Collapse>
+        <ShowList showList={results} />
+      </Space>
     </AppLayout>
   );
 }
