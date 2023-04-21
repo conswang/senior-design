@@ -1,5 +1,5 @@
 import { Donghua, DonghuaTagCN, Prisma, TagCN } from "@prisma/client";
-import { Col, Row, Space, Image, Typography, Divider, Tag } from "antd";
+import { Col, Row, Space, Image, Typography, Divider, Tag, Statistic } from "antd";
 import {
   getDisplayChineseTitle,
   getDisplayPlatform,
@@ -114,6 +114,10 @@ export default function ShowDetail({ donghua, tags }: ShowDetailProps) {
                 Synopsis
               </Typography.Title>
               <Typography.Paragraph>{displaySummary}</Typography.Paragraph>
+              <Space size="large" style={{padding: "8px 0"}}>
+                <Statistic title="Score" value={donghua.score || "N/A"} />
+                <Statistic title="Scored by" value={donghua.scoreCount || "N/A"}/>
+              </Space>
               <Typography.Title level={3}>Tags</Typography.Title>
               <Space wrap>{tagList}</Space>
               <Typography.Title level={3}>Synonyms</Typography.Title>
