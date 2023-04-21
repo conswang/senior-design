@@ -64,7 +64,7 @@ export default function ShowDetail({ donghua, tags }: ShowDetailProps) {
   });
 
   const tagList = tags.length > 0 ? tags.map((tag) => {
-    return <Tag>{tag.nameEN}</Tag>
+    return <Tag key={tag.name}>{tag.nameEN}</Tag>
   }) : <Typography.Text>No tags ¯\_(˶′◡‵˶)_/¯</Typography.Text>
 
   return (
