@@ -37,9 +37,10 @@ const dateToString = (date?: Date) => {
 
 interface FinderFormProps {
   layout?: FormProps["layout"];
+  onFinishCallback?: () => void;
 }
 
-export default function FinderForm({ layout }: FinderFormProps) {
+export default function FinderForm({ layout, onFinishCallback}: FinderFormProps) {
   const router = useRouter();
   const [initialValues, setInitialValues] = useState<FormValues>({
     query: "",
@@ -77,6 +78,7 @@ export default function FinderForm({ layout }: FinderFormProps) {
     };
 
     router.push(`/list?searchFilter=${JSON.stringify(filter)}`);
+    onFinishCallback && onFinishCallback();
   };
 
   useMemo(() => {

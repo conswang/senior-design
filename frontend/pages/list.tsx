@@ -19,7 +19,7 @@ export default function List({ filterString }: ListProps) {
     offset: 0,
     limit: 10,
   });
-  
+
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   useEffect(() => {
@@ -40,11 +40,14 @@ export default function List({ filterString }: ListProps) {
 
   return (
     <AppLayout>
-      <Space direction="vertical" style={{width: "100%"}}>
+      <Space direction="vertical" style={{ width: "100%" }}>
         <Typography.Title>Shows</Typography.Title>
-        <Collapse activeKey={isCollapsed ? undefined : "1"}>
+        <Collapse accordion activeKey={isCollapsed ? "1" : undefined} onChange={() => setIsCollapsed(!isCollapsed)}>
           <Collapse.Panel key="1" header="Sort and Filter">
-            <FinderForm layout="horizontal"/>
+            <FinderForm
+              layout="horizontal"
+              onFinishCallback={() => setIsCollapsed(false)}
+            />
           </Collapse.Panel>
         </Collapse>
         <ShowList
