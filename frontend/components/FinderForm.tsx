@@ -3,6 +3,7 @@ import {
   Checkbox,
   DatePicker,
   Form,
+  FormProps,
   Input,
   InputNumber,
   Radio,
@@ -12,6 +13,20 @@ import {
 import { SearchFilter, SortBy } from "@/types";
 import { useRouter } from "next/router";
 import { Donghua_platform } from "@prisma/client";
+import { useEffect, useMemo, useState } from "react";
+import dayjs from "dayjs";
+
+type FormValues = {
+  query: string;
+  includeNsfw: boolean;
+  airDate?: [dayjs.Dayjs, dayjs.Dayjs];
+  numEpisodesMin?: number;
+  numEpisodesMax?: number;
+  scoreMin?: number;
+  scoreMax?: number;
+  includePlatforms: Donghua_platform[];
+  sortBy: SortBy;
+};
 
 const dateToString = (date?: Date) => {
   if (!date) {
@@ -20,8 +35,22 @@ const dateToString = (date?: Date) => {
   return date.toISOString().substring(0, 10);
 };
 
-export default function FinderForm() {
+interface FinderFormProps {
+  layout?: FormProps["layout"];
+}
+
+export default function FinderForm({ layout }: FinderFormProps) {
   const router = useRouter();
+  const [initialValues, setInitialValues] = useState<FormValues>({
+    query: "",
+    includeNsfw: true,
+    includePlatforms: [
+      Donghua_platform.TV,
+      Donghua_platform.WEB,
+      Donghua_platform.Unknown,
+    ],
+    sortBy: SortBy.BEST_MATCH,
+  });
 
   const onFinish = (fieldsValue: any) => {
     console.log(fieldsValue);
@@ -50,23 +79,55 @@ export default function FinderForm() {
     router.push(`/list?searchFilter=${JSON.stringify(filter)}`);
   };
 
+  useMemo(() => {
+    if (typeof router.query.searchFilter === "string") {
+      const initialFilter: SearchFilter = JSON.parse(router.query.searchFilter);
+      setInitialValues({
+        ...initialValues,
+        query: initialFilter.query || "",
+        includeNsfw: initialFilter.includeNsfw || false,
+        ...(initialFilter.includePlatforms && {
+          includePlatforms: initialFilter.includePlatforms,
+        }),
+        ...(initialFilter.sortBy && { sortBy: initialFilter.sortBy }),
+        ...(initialFilter.score?.min && { scoreMin: initialFilter.score.min }),
+        ...(initialFilter.score?.max && { scoreMax: initialFilter.score.max }),
+        ...(initialFilter.numEpisodes?.min && {
+          numEpisodesMin: initialFilter.numEpisodes.min,
+        }),
+        ...(initialFilter.numEpisodes?.max && {
+          numEpisodesMax: initialFilter.numEpisodes.max,
+        }),
+        ...(initialFilter.startDate &&
+          initialFilter.endDate && {
+            airDate: [
+              dayjs(initialFilter.startDate),
+              dayjs(initialFilter.endDate),
+            ],
+          }),
+      });
+    }
+  }, [router, router.query.searchFilter]);
+
   return (
     <Form
-      labelCol={{ span: 4 }}
-      wrapperCol={{ span: 20 }}
+      {...(layout === "horizontal" && {
+        labelCol: { span: 4 },
+        wrapperCol: { span: 14 },
+      })}
       size="small"
-      layout="horizontal"
+      layout={layout}
       style={{ width: "100%" }}
       onFinish={onFinish}
     >
-      <Form.Item label="Query" name="query">
+      <Form.Item label="Query" name="query" initialValue={initialValues.query}>
         <Input />
       </Form.Item>
       <Form.Item label="Air date" name="air-date">
-        <DatePicker.RangePicker />
+        <DatePicker.RangePicker defaultValue={initialValues.airDate} />
       </Form.Item>
       <Form.Item label="Include NSFW" name="include-nsfw">
-        <Switch />
+        <Switch defaultChecked={initialValues.includeNsfw} />
       </Form.Item>
       <Form.Item label="Number of episodes">
         <Form.Item
@@ -74,22 +135,24 @@ export default function FinderForm() {
           name="num-episodes-min"
           colon={false}
           style={{ display: "inline-block", marginRight: 12 }}
+          initialValue={initialValues.numEpisodesMin}
         >
-          <InputNumber min={0} max={10000}  size="small"/>
+          <InputNumber min={0} max={10000} size="small" />
         </Form.Item>
         <Form.Item
           label="max"
           name="num-episodes-max"
           colon={false}
           style={{ display: "inline-block" }}
+          initialValue={initialValues.numEpisodesMax}
         >
-          <InputNumber min={0} max={10000}  size="small"/>
+          <InputNumber min={0} max={10000} size="small" />
         </Form.Item>
       </Form.Item>
       <Form.Item
         label="Platform"
         name="platform"
-        initialValue={[Donghua_platform.TV, Donghua_platform.WEB, Donghua_platform.Unknown]}
+        initialValue={initialValues.includePlatforms}
       >
         <Checkbox.Group
           options={[
@@ -99,25 +162,31 @@ export default function FinderForm() {
           ]}
         />
       </Form.Item>
-      <Form.Item label="Score" >
+      <Form.Item label="Score">
         <Form.Item
           label="min"
           name="score-min"
           colon={false}
           style={{ display: "inline-block", marginRight: 12 }}
+          initialValue={initialValues.scoreMin}
         >
-          <InputNumber min={0} max={10} size="small"/>
+          <InputNumber min={0} max={10} size="small" />
         </Form.Item>
         <Form.Item
           label="max"
           name="score-max"
           colon={false}
           style={{ display: "inline-block" }}
+          initialValue={initialValues.scoreMax}
         >
-          <InputNumber min={0} max={10} size="small"/>
+          <InputNumber min={0} max={10} size="small" />
         </Form.Item>
       </Form.Item>
-      <Form.Item label="Sort by" name="sort-by" initialValue={SortBy.BEST_MATCH}>
+      <Form.Item
+        label="Sort by"
+        name="sort-by"
+        initialValue={initialValues.sortBy}
+      >
         <Radio.Group>
           <Radio.Button value={SortBy.BEST_MATCH}>Best Match</Radio.Button>
           <Radio.Button value={SortBy.SCORE}>Score</Radio.Button>

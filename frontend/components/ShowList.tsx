@@ -1,6 +1,6 @@
 import { Donghua } from "@prisma/client";
 import ShowCard from "./ShowCard";
-import { Pagination, PaginationProps, Space } from "antd";
+import { Pagination, PaginationProps, Space, Typography } from "antd";
 import { useRouter } from "next/router";
 import { SearchFilter } from "@/types";
 
@@ -20,7 +20,7 @@ export default function ShowList({
   const router = useRouter();
 
   if (!showList || showList.length === 0) {
-    return <></>;
+    return <Typography.Text style={{width: "100%"}}>No results found ¯\_( ´･ω･)_/¯</Typography.Text>;
   }
   
   const shows = showList.map((show) => {

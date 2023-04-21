@@ -19,6 +19,8 @@ export default function List({ filterString }: ListProps) {
     offset: 0,
     limit: 10,
   });
+  
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   useEffect(() => {
     fetch(`/api/search?`, {
@@ -38,11 +40,11 @@ export default function List({ filterString }: ListProps) {
 
   return (
     <AppLayout>
-      <Space direction="vertical">
+      <Space direction="vertical" style={{width: "100%"}}>
         <Typography.Title>Shows</Typography.Title>
-        <Collapse>
+        <Collapse activeKey={isCollapsed ? undefined : "1"}>
           <Collapse.Panel key="1" header="Sort and Filter">
-            <FinderForm />
+            <FinderForm layout="horizontal"/>
           </Collapse.Panel>
         </Collapse>
         <ShowList
