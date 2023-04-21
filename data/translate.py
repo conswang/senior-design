@@ -1,5 +1,6 @@
 import six
 from google.cloud import translate_v2 as translate
+from html import unescape
 
 def translate_text(target, text, client):
     """Translates text into the target language.
@@ -18,7 +19,7 @@ def translate_text(target, text, client):
     # print(u"Text: {}".format(result["input"]))
     # print(u"Translation: {}".format(result["translatedText"]))
     # print(u"Detected source language: {}".format(result["detectedSourceLanguage"]))
-    return result['translatedText']
+    return unescape(result['translatedText'])
 
 def is_chinese(text, client):
     """Detects the text's language."""

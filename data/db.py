@@ -30,6 +30,52 @@ translateClient = translate_v2.Client()
 
 cursor = connection.cursor()
 
+def getTitles(malShow):
+  # values from titles, title, title_japanese, title_synonyms all combined into 1 array
+  res = set()
+  
+  if malShow['titles']:
+    for elt in malShow["titles"]:
+      res.add(elt['title'])
+  
+  if malShow["title_english"]:
+    res.add(malShow["title_english"])
+  
+  if malShow['title']:
+    res.add(malShow["title"])
+  
+  if malShow["title_japanese"]:
+    res.add(malShow["title_japanese"])
+
+  if malShow["title_synonyms"]:
+    for title in malShow['title_synonyms']:
+      res.add(title)
+  
+  return json.dumps(list(res))
+
+# sometimes MAL show summary is too short, just use bangumi MTL summary if it's longer
+def pickSummary(malShow, translated_summary):
+  if not malShow['synopsis']: # no MAL summary
+    return translated_summary
+  if len(malShow['synopsis']) < 50 and len(translated_summary) > 100:
+    return translated_summary
+  return malShow['synopsis']
+
+# use bangumi and MAL scores to jumpstart score counts
+# give score count of max 100
+def calculateScore(bangumiScore, bangumiScoreCount, malScore, malScoreCount):
+  score = 0
+  scoreCount = 0
+  if not malScore or not malScoreCount: # no MAL score
+    score = bangumiScore
+    scoreCount = min(bangumiScoreCount, 100)
+  else:
+    # take weighted average
+    score = (bangumiScore * bangumiScoreCount + malScore * malScoreCount) / (bangumiScoreCount + malScoreCount)
+    score = round(score, 2)
+    scoreCount = min(bangumiScoreCount + malScoreCount, 100)
+  return [score, scoreCount]
+
 def roughDateMatch(bangumiDate, malDate):
   if malDate[:7] == bangumiDate[:7]: # year and month match
     return True
@@ -53,11 +99,13 @@ for bangumiShow in showList:
   if not bangumiId:
     print("Doesn't even have bangumi id what are we even doing")
 
-  bangumiRank = -1
-  bangumiScore = -1
+  bangumiRank = None
+  bangumiScore = 0
+  bangumiScoreCount = 0
   if bangumiShow['rating']:
-    bangumiRank = bangumiShow['rating']['rank'] or -1
-    bangumiScore = bangumiShow['rating']['score'] or -1
+    bangumiRank = bangumiShow['rating']['rank']
+    bangumiScore = bangumiShow['rating']['score']
+    bangumiScoreCount = bangumiShow['rating']['total']
 
   summaryChinese = bangumiShow['summary']
   startDate = '1900-01-01' # format in mysql is yyyy-mm-dd
@@ -66,7 +114,7 @@ for bangumiShow in showList:
   if bangumiShow['date']:
     startDate = bangumiShow['date']
 
-  numEpisodes = -1
+  numEpisodes = None
   if bangumiShow['eps']:
     numEpisodes = bangumiShow['eps']
 
@@ -79,12 +127,16 @@ for bangumiShow in showList:
 
   # MAL data -------------------------------------------------
 
-  malId = -1
-  malRank = -1
-  malScore = -1
+  malId = None
+  malRank = None
+  malScore = 0
+  malScoreCount = 0
   source = ''
   episodeLength = ''
   trailerUrl = ''
+  otherTitles = "[]"
+
+  translated_summary =  translate_text('en', bangumiShow['summary'], translateClient)
 
   # fetch show from MAL
   searchResult = jikan.search('anime', bangumiShow['name'])
@@ -95,7 +147,7 @@ for bangumiShow in showList:
   if searchResult['pagination']['items']['count'] == 0:
      # no results, keep all default MAL data and bangumi data
      # machine translate the title
-    summaryEnglish = translate_text('en', bangumiShow['summary'], translateClient)
+    summaryEnglish = translated_summary
 
   else:
     # we found show on MAL
@@ -115,23 +167,25 @@ for bangumiShow in showList:
         print(f"dates are {bangumiShow['date']} and {malShow['aired']['from']}")
 
         showsMatch = False
-        summaryEnglish = translate_text('en', bangumiShow['summary'], translateClient)
+        summaryEnglish = translated_summary
     
     if showsMatch:
 
       if malShow['title'] != bangumiShow['name']:
         print(f"English title on MAL {malShow['title']} does not match title on bangumi {bangumiShow['name']}, choosing MAL title")
 
-      titleEnglish = malShow['title']
-
-      if malShow['synopsis']:
-        summaryEnglish = malShow['synopsis']
+      if malShow['title_english']:
+        titleEnglish = malShow['title_english']
       else:
-        summaryEnglish = translate_text('en', bangumiShow['summary'], translateClient)
+        titleEnglish = malShow['title']
+      otherTitles = getTitles(malShow)
 
-      malId = malShow['mal_id'] or -1
-      malRank = malShow['rank'] or -1
-      malScore = malShow['score'] or -1
+      summaryEnglish = pickSummary(malShow, translated_summary)
+
+      malId = malShow['mal_id'] or None
+      malRank = malShow['rank'] or None
+      malScore = malShow['score'] or 0
+      malScoreCount = malShow['scored_by'] or 0
       episodeLength = malShow['duration'] or ''
       source = malShow['source'] or ''
 
@@ -139,10 +193,13 @@ for bangumiShow in showList:
         endDate = malShow['aired']['to'][:10]
 
       trailerUrl = malShow['trailer']['url'] or ''
+  
+  [score, scoreCount] = calculateScore(bangumiScore, bangumiScoreCount, malScore, malScoreCount)
 
   sql = f"""INSERT INTO Donghua (
     titleEnglish,
     titleChinese,
+    otherTitles,
     summaryEnglish,
     summaryChinese,
     nsfw,
@@ -155,37 +212,49 @@ for bangumiShow in showList:
     bangumiId,
     bangumiRank,
     bangumiScore,
+    bangumiScoreCount,
     malId,
     malRank,
     malScore,
+    malScoreCount,
+    score,
+    scoreCount,
     imageUrl,
     trailerUrl
-  ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+  ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
 
-  print("Inserted", bangumiShow['name'])
-
-  cursor.execute(sql, (
-    titleEnglish,
-    titleChinese,
-    summaryEnglish,
-    summaryChinese,
-    nsfw,
-    platform,
-    startDate,
-    endDate,
-    source,
-    numEpisodes,
-    episodeLength,
-    bangumiId,
-    bangumiRank,
-    bangumiScore,
-    malId,
-    malRank,
-    malScore,
-    imageUrl,
-    trailerUrl
-  ))
-  
-  connection.commit()
+  try:
+    cursor.execute(sql, (
+      titleEnglish,
+      titleChinese,
+      otherTitles,
+      summaryEnglish,
+      summaryChinese,
+      nsfw,
+      platform,
+      startDate,
+      endDate,
+      source,
+      numEpisodes,
+      episodeLength,
+      bangumiId,
+      bangumiRank,
+      bangumiScore,
+      bangumiScoreCount,
+      malId,
+      malRank,
+      malScore,
+      malScoreCount,
+      score,
+      scoreCount,
+      imageUrl,
+      trailerUrl
+    ))
+    connection.commit()
+    print("Inserted", bangumiShow['name'])
+  except pymysql.Error as e:
+    print(e)
+  except :
+    print("Unknown error occurred when inserting into DB")
 
   time.sleep(2) # wait for rate limiting

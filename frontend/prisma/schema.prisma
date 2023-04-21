@@ -8,30 +8,35 @@ datasource db {
 }
 
 model Donghua {
-  id             Int               @id @default(autoincrement())
-  titleEnglish   String?           @db.VarChar(200)
-  titleChinese   String?           @db.VarChar(200)
-  summaryEnglish String?           @db.VarChar(5000)
-  summaryChinese String?           @db.VarChar(5000)
-  nsfw           Boolean?
-  platform       Donghua_platform?
-  startDate      String?           @db.VarChar(10)
-  endDate        String?           @db.VarChar(10)
-  source         String?           @db.VarChar(50)
-  numEpisodes    Int?
-  episodeLength  String?           @db.VarChar(50)
-  bangumiId      Int?
-  bangumiRank    Int?
-  bangumiScore   Float?
-  malId          Int?
-  malRank        Int?
-  malScore       Float?
-  imageUrl       String?           @db.VarChar(2048)
-  trailerUrl     String?           @db.VarChar(2048)
+  id                Int               @id @default(autoincrement())
+  titleEnglish      String?           @db.VarChar(200)
+  titleChinese      String?           @db.VarChar(200)
+  otherTitles       Json?
+  summaryEnglish    String?           @db.VarChar(5000)
+  summaryChinese    String?           @db.VarChar(5000)
+  nsfw              Boolean?
+  platform          Donghua_platform?
+  startDate         String?           @db.VarChar(10)
+  endDate           String?           @db.VarChar(10)
+  source            String?           @db.VarChar(50)
+  numEpisodes       Int?
+  episodeLength     String?           @db.VarChar(50)
+  bangumiId         Int?              @unique(map: "bangumiId")
+  bangumiRank       Int?
+  bangumiScore      Float?
+  bangumiScoreCount Int?
+  malId             Int?              @unique(map: "malId")
+  malRank           Int?
+  malScore          Float?
+  malScoreCount     Int?
+  score             Float?
+  scoreCount        Int?
+  imageUrl          String?           @db.VarChar(2048)
+  trailerUrl        String?           @db.VarChar(2048)
 }
 
 enum Donghua_platform {
   TV
-  Web
+  WEB
   Unknown
 }
