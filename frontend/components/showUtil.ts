@@ -24,12 +24,12 @@ export const getDisplayPlatform = (
     return "Unknown";
   }
   switch (platform) {
-    case "TV":
+    case Donghua_platform.TV:
       return "TV";
-    case "Web":
+    case Donghua_platform.WEB:
       return "Web";
     case "Unknown":
-      return "Unknown";
+      return Donghua_platform.Unknown;
   }
 };
 

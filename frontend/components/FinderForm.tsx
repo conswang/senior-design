@@ -11,6 +11,7 @@ import {
 } from "antd";
 import { SearchFilter, SortBy } from "@/types";
 import { useRouter } from "next/router";
+import { Donghua_platform } from "@prisma/client";
 
 const dateToString = (date?: Date) => {
   if (!date) {
@@ -88,13 +89,13 @@ export default function FinderForm() {
       <Form.Item
         label="Platform"
         name="platform"
-        initialValue={["TV", "Web", "Unknown"]}
+        initialValue={[Donghua_platform.TV, Donghua_platform.WEB, Donghua_platform.Unknown]}
       >
         <Checkbox.Group
           options={[
-            { label: "TV", value: "TV" },
-            { label: "Web", value: "Web" },
-            { label: "Other", value: "Unknown" },
+            { label: "TV", value: Donghua_platform.TV },
+            { label: "Web", value: Donghua_platform.WEB },
+            { label: "Other", value: Donghua_platform.Unknown },
           ]}
         />
       </Form.Item>
@@ -116,7 +117,7 @@ export default function FinderForm() {
           <InputNumber min={0} max={10} size="small"/>
         </Form.Item>
       </Form.Item>
-      <Form.Item label="Sort by" name="sort-by" initialValue="BEST_MATCH">
+      <Form.Item label="Sort by" name="sort-by" initialValue={SortBy.BEST_MATCH}>
         <Radio.Group>
           <Radio.Button value={SortBy.BEST_MATCH}>Best Match</Radio.Button>
           <Radio.Button value={SortBy.SCORE}>Score</Radio.Button>

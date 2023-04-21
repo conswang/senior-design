@@ -13,6 +13,7 @@ export default function ShowDetail({ donghua }: ShowDetailProps) {
 
   let leftColumnInfo: Array<{ name?: string; value: string }> = [
     {
+      name: "Chinese title",
       value: donghua.titleChinese!,
     },
   ];
@@ -32,18 +33,13 @@ export default function ShowDetail({ donghua }: ShowDetailProps) {
     });
   }
   // TODO: combine start/end dates into 1 field
-  if (donghua.startDate && donghua.startDate != "1900-01-01") {
-    leftColumnInfo.push({
-      name: "From",
-      value: donghua.startDate,
-    });
-  }
-  if (donghua.endDate && donghua.endDate != "2100-01-01") {
-    leftColumnInfo.push({
-      name: "To",
-      value: donghua.endDate,
-    });
-  }
+  const startDate = donghua.startDate && donghua.startDate != "1900-01-01" ? donghua.startDate : "??"
+  const endDate = donghua.endDate && donghua.endDate != "2100-01-01" ? donghua.endDate : "??"
+  leftColumnInfo.push({
+    name: "Air date",
+    value: `${startDate} to ${endDate}`
+  })
+
   if (donghua.source) {
     leftColumnInfo.push({
       name: "Source",
