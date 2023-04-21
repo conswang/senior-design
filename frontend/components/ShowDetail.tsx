@@ -1,6 +1,6 @@
 import { Donghua, DonghuaTagCN, TagCN } from "@prisma/client";
 import { Col, Row, Space, Image, Typography, Divider, Tag } from "antd";
-import { getDisplayPlatform, getDisplaySummary, getDisplayTitle } from "./showUtil";
+import { getDisplayPlatform, getDisplaySummary, getDisplayTitle, placeHolderImage } from "./showUtil";
 
 interface ShowDetailProps {
   donghua: Donghua;
@@ -63,16 +63,16 @@ export default function ShowDetail({ donghua, tags }: ShowDetailProps) {
     );
   });
 
-  const tagList = tags.map((tag) => {
+  const tagList = tags.length > 0 ? tags.map((tag) => {
     return <Tag>{tag.nameEN}</Tag>
-  }) 
+  }) : <Typography.Text>No tags ¯\_(˶′◡‵˶)_/¯</Typography.Text>
 
   return (
     <Space direction="vertical" size="large" style={{ width: "100%" }}>
       <Typography.Title>{displayTitle}</Typography.Title>
       <Row>
         <Col span={6}>
-          <Image src={donghua.imageUrl!} width={225} preview={false} />
+          <Image src={donghua.imageUrl || placeHolderImage} width={225} preview={false} />
           <Divider />
           <Space direction="vertical" size="small">
             {leftColumnElements}

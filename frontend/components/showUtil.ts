@@ -34,7 +34,7 @@ export const getDisplayPlatform = (
 };
 
 export const getDisplaySummary = (donghua: Donghua, limit?: number): string => {
-  let htmlStr = donghua.summaryEnglish || "";
+  let htmlStr = donghua.summaryEnglish || "No summary ¯\_(˶′◡‵˶)_/¯";
 
   if (limit && htmlStr.length > limit) {
     htmlStr = htmlStr.substring(0, limit) + "...";
@@ -47,3 +47,5 @@ export const getDisplaySummary = (donghua: Donghua, limit?: number): string => {
   htmlStr = htmlStr.replace(/&amp;/g , "&");
   return htmlStr;
 }
+
+export const placeHolderImage = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/White_Persian_Cat.jpg/220px-White_Persian_Cat.jpg";
