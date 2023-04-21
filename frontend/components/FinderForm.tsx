@@ -54,7 +54,7 @@ export default function FinderForm({ layout, onFinishCallback}: FinderFormProps)
   });
 
   const onFinish = (fieldsValue: any) => {
-    console.log(fieldsValue);
+    // console.log(fieldsValue);
 
     let filter: SearchFilter = {
       query: fieldsValue["query"],
@@ -76,9 +76,9 @@ export default function FinderForm({ layout, onFinishCallback}: FinderFormProps)
       includePlatforms: fieldsValue["platform"],
       sortBy: fieldsValue["sort-by"],
     };
+    onFinishCallback && onFinishCallback();
 
     router.push(`/list?searchFilter=${JSON.stringify(filter)}`);
-    onFinishCallback && onFinishCallback();
   };
 
   useMemo(() => {

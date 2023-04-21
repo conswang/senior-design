@@ -42,11 +42,11 @@ export default function List({ filterString }: ListProps) {
     <AppLayout>
       <Space direction="vertical" style={{ width: "100%" }}>
         <Typography.Title>Shows</Typography.Title>
-        <Collapse accordion activeKey={isCollapsed ? "1" : undefined} onChange={() => setIsCollapsed(!isCollapsed)}>
+        <Collapse accordion activeKey={isCollapsed ? undefined : "1"} onChange={() => setIsCollapsed(!isCollapsed)}>
           <Collapse.Panel key="1" header="Sort and Filter">
             <FinderForm
               layout="horizontal"
-              onFinishCallback={() => setIsCollapsed(false)}
+              onFinishCallback={() => setIsCollapsed(true)}
             />
           </Collapse.Panel>
         </Collapse>
