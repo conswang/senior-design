@@ -1,13 +1,13 @@
-import { Donghua } from "@prisma/client";
-import { Col, Row, Space, Image, Typography, Divider } from "antd";
+import { Donghua, DonghuaTagCN, TagCN } from "@prisma/client";
+import { Col, Row, Space, Image, Typography, Divider, Tag } from "antd";
 import { getDisplayPlatform, getDisplaySummary, getDisplayTitle } from "./showUtil";
-import ShowCard from "./ShowCard";
 
 interface ShowDetailProps {
   donghua: Donghua;
+  tags: TagCN[];
 }
 
-export default function ShowDetail({ donghua }: ShowDetailProps) {
+export default function ShowDetail({ donghua, tags }: ShowDetailProps) {
   const displayTitle = getDisplayTitle(donghua);
   const displaySummary = getDisplaySummary(donghua);
 
@@ -63,6 +63,10 @@ export default function ShowDetail({ donghua }: ShowDetailProps) {
     );
   });
 
+  const tagList = tags.map((tag) => {
+    return <Tag>{tag.nameEN}</Tag>
+  }) 
+
   return (
     <Space direction="vertical" size="large" style={{ width: "100%" }}>
       <Typography.Title>{displayTitle}</Typography.Title>
@@ -86,6 +90,8 @@ export default function ShowDetail({ donghua }: ShowDetailProps) {
               <Typography.Paragraph>
                 {displaySummary}
               </Typography.Paragraph>
+              <Typography.Title level={3}>Tags</Typography.Title>
+              <Space wrap>{tagList}</Space>
             </div>
           </Space>
         </Col>

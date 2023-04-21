@@ -33,6 +33,51 @@ model Donghua {
   scoreCount        Int?
   imageUrl          String?           @db.VarChar(2048)
   trailerUrl        String?           @db.VarChar(2048)
+  DonghuaTagCN      DonghuaTagCN[]
+  DonghuaTagEN      DonghuaTagEN[]
+
+  @@index([summaryEnglish], map: "summaryEnglish")
+  @@index([titleEnglish], map: "titleEnglish")
+}
+
+model DonghuaTagCN {
+  donghuaId Int
+  tagName   String  @db.VarChar(50)
+  TagCN     TagCN   @relation(fields: [tagName], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "DonghuaTagCN_ibfk_1")
+  Donghua   Donghua @relation(fields: [donghuaId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "DonghuaTagCN_ibfk_2")
+
+  @@id([donghuaId, tagName])
+  @@index([tagName], map: "tagName")
+}
+
+model DonghuaTagEN {
+  donghuaId Int
+  tagId     Int
+  TagEN     TagEN   @relation(fields: [tagId], references: [malId], onDelete: NoAction, onUpdate: NoAction, map: "DonghuaTagEN_ibfk_1")
+  Donghua   Donghua @relation(fields: [donghuaId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "DonghuaTagEN_ibfk_2")
+
+  @@id([donghuaId, tagId])
+  @@index([tagId], map: "tagId")
+}
+
+model TagCN {
+  name         String         @id @db.VarChar(50)
+  count        Int?
+  nameEN       String?        @db.VarChar(50)
+  tagENId      Int?
+  DonghuaTagCN DonghuaTagCN[]
+  TagEN        TagEN?         @relation(fields: [tagENId], references: [malId], onDelete: NoAction, onUpdate: NoAction, map: "TagCN_TagEN_malId_fk")
+
+  @@index([tagENId], map: "TagCN_TagEN_malId_fk")
+}
+
+model TagEN {
+  malId        Int            @id
+  name         String?        @db.VarChar(50)
+  type         String?        @db.VarChar(50)
+  nameCN       String?        @db.VarChar(50)
+  DonghuaTagEN DonghuaTagEN[]
+  TagCN        TagCN[]
 }
 
 enum Donghua_platform {
