@@ -1,5 +1,4 @@
 import { Layout, Menu, Typography } from "antd";
-import MenuItem from "antd/es/menu/MenuItem";
 import Link from "next/link";
 import { ReactNode } from "react";
 
@@ -8,6 +7,9 @@ interface LayoutProps {
 }
 
 export default function AppLayout({ children }: LayoutProps) {
+  // random show
+  const randomId = Math.floor(Math.random() * 2000);
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Layout.Header style={{ padding: "0 20%" }}>
@@ -36,6 +38,10 @@ export default function AppLayout({ children }: LayoutProps) {
               key: "finder",
               label: <Link href="/finder">Finder</Link>,
             },
+            {
+              key: "random",
+              label: <Link href={`/detail/${randomId}`}>Random</Link>
+            }
           ]}
         />
       </Layout.Header>
