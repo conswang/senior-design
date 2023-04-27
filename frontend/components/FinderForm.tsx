@@ -7,6 +7,7 @@ import {
   Input,
   InputNumber,
   Radio,
+  Select,
   Space,
   Switch,
 } from "antd";
@@ -15,6 +16,7 @@ import { useRouter } from "next/router";
 import { Donghua_platform } from "@prisma/client";
 import { useEffect, useMemo, useState } from "react";
 import dayjs from "dayjs";
+import FinderFormTagField from "./FinderFormTagField";
 
 type FormValues = {
   query: string;
@@ -124,6 +126,9 @@ export default function FinderForm({ layout, onFinishCallback}: FinderFormProps)
     >
       <Form.Item label="Query" name="query" initialValue={initialValues.query}>
         <Input />
+      </Form.Item>
+      <Form.Item label="Tags" name="tags">
+        <FinderFormTagField/>
       </Form.Item>
       <Form.Item label="Air date" name="air-date">
         <DatePicker.RangePicker defaultValue={initialValues.airDate} />

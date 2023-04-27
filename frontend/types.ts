@@ -1,4 +1,4 @@
-import { Donghua_platform } from "@prisma/client";
+import { Donghua_platform, TagCN } from "@prisma/client";
 
 type Range = {
   min?: number;

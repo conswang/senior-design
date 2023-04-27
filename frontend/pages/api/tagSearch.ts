@@ -23,10 +23,6 @@ export default async function handler(
   }
 
   const searchPrefix = req.query.searchPrefix;
-  if (searchPrefix == "") {
-    res.send({ tags: [] });
-  }
-
   const prisma = new PrismaClient();
 
   const tags = await prisma.tagCN.findMany({
