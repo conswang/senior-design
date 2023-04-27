@@ -9,6 +9,7 @@ export enum SortBy {
   SCORE,
   AIR_DATE,
   BEST_MATCH,
+  POPULAR,
 }
 export interface SearchFilter {
   query?: string;

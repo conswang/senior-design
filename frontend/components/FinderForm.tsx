@@ -202,6 +202,7 @@ export default function FinderForm({
           <Radio.Button value={SortBy.BEST_MATCH}>Best Match</Radio.Button>
           <Radio.Button value={SortBy.SCORE}>Score</Radio.Button>
           <Radio.Button value={SortBy.AIR_DATE}>Air Date</Radio.Button>
+          <Radio.Button value={SortBy.POPULAR}>Popular</Radio.Button>
         </Radio.Group>
       </Form.Item>
       <Form.Item label=" " colon={false}>

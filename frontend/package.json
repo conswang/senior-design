@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.0.1",
     "@next/font": "13.1.5",
     "@prisma/client": "^4.13.0",
     "@types/node": "18.11.18",

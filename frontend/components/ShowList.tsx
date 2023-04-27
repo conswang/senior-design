@@ -1,5 +1,5 @@
 import { Donghua } from "@prisma/client";
-import ShowCard from "./ShowCard";
+import ShowListItem from "./ShowListItem";
 import { Pagination, PaginationProps, Space, Typography } from "antd";
 import { useRouter } from "next/router";
 import { SearchFilter } from "@/types";
@@ -24,7 +24,7 @@ export default function ShowList({
   }
   
   const shows = showList.map((show) => {
-    return <ShowCard donghua={show} key={show.id} />;
+    return <ShowListItem donghua={show} key={show.id} />;
   });
 
   const onChange: PaginationProps['onChange'] = (pageNumber) => {

@@ -36,7 +36,7 @@ export default async function handler(
   //   .join(" OR ")
 
   const sqlTagsList = `(${filter.tags?.map((tag) => `'${tag.toUpperCase().replaceAll(`'`, `''`)}'`).join(',')})`;
-  console.log(sqlTagsList);
+  // console.log(sqlTagsList);
 
   const filterSql = `${filter.startDate ? `\nAND startDate >= '${filter.startDate}'` : ""}` +
   `${filter.endDate ? `\nAND endDate <= '${filter.endDate}'` : ""}` +
@@ -56,12 +56,15 @@ export default async function handler(
     case SortBy.AIR_DATE:
       orderByFilter = `ORDER BY startDate DESC`
       break;
+    case SortBy.POPULAR:
+      orderByFilter = `ORDER BY score * scoreCount DESC`
+      break;
     default:
       orderByFilter = `ORDER BY (${searchRelevanceSql}) DESC`
       break;
   }
 
-  console.log(`SELECT * FROM Donghua WHERE (${searchRelevanceSql}) > 0${filterSql} ${orderByFilter} LIMIT ${filter.limit || 10} OFFSET ${filter.offset || 0}`)
+  // console.log(`SELECT * FROM Donghua WHERE (${searchRelevanceSql}) > 0${filterSql} ${orderByFilter} LIMIT ${filter.limit || 10} OFFSET ${filter.offset || 0}`)
 
   // TODO: make query work without raw unsafe
   const results = await prisma.$queryRawUnsafe<Donghua[]>

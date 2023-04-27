@@ -1,23 +1,45 @@
 import { Donghua } from "@prisma/client";
-import { Card, Col, Row, Image, Typography, Space } from "antd";
-import { getDisplaySummary, getDisplayTitle, placeHolderImage } from "./showUtil";
+import { Card, Col, Space, Typography, Image } from "antd";
 import Link from "next/link";
+import {
+  getDisplayTitle,
+  getDisplaySummary,
+  placeHolderImage,
+} from "./showUtil";
 
 interface ShowCardProps {
-  donghua: Donghua
+  donghua: Donghua;
 }
 
-export default function ShowCard({donghua}: ShowCardProps) {
+export default function ShowCard({ donghua }: ShowCardProps) {
   const displayTitle = getDisplayTitle(donghua);
   const displaySummary = getDisplaySummary(donghua, 200);
 
-  return <Card size="small" title={<Link href={`/detail/${donghua.id}`}>{displayTitle}</Link>}>
-    <Row>
-      <Space size="large">
-        <Image src={donghua.imageUrl || placeHolderImage} preview={false} width={80}/>
-        <Typography.Paragraph>{displaySummary}</Typography.Paragraph>
-      </Space>
-    </Row>
-  
-  </Card>
+  return (
+    <div style={{ position: "relative", textAlign: "center" }}>
+      <Link href={`/detail/${donghua.id}`}>
+        <Image
+          src={donghua.imageUrl || placeHolderImage}
+          preview={false}
+          height={250}
+        />
+        <div
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            width: "100%",
+            height: 100,
+            background:
+              "linear-gradient(0deg, rgba(0,0,0,1) 25%, rgba(255,255,255,0) 100%)",
+          }}
+        ></div>
+        <div style={{ position: "absolute", bottom: 0, left: 0, margin: 8 }}>
+          <Typography.Text style={{ color: "whitesmoke" }} strong={true}>
+            {displayTitle}
+          </Typography.Text>
+        </div>
+      </Link>
+    </div>
+  );
 }

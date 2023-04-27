@@ -7,6 +7,7 @@ import {
   getDisplayTitle,
   placeHolderImage,
 } from "./showUtil";
+import { useRouter } from "next/router";
 
 interface ShowDetailProps {
   donghua: Donghua;
@@ -16,6 +17,7 @@ interface ShowDetailProps {
 export default function ShowDetail({ donghua, tags }: ShowDetailProps) {
   const displayTitle = getDisplayTitle(donghua);
   const displaySummary = getDisplaySummary(donghua);
+  const router = useRouter();
 
   let leftColumnInfo: Array<{ name?: string; value: string }> = [];
 
@@ -33,7 +35,6 @@ export default function ShowDetail({ donghua, tags }: ShowDetailProps) {
         (donghua.episodeLength ? ` episodes / ${donghua.episodeLength}` : ""),
     });
   }
-  // TODO: combine start/end dates into 1 field
   const startDate =
     donghua.startDate && donghua.startDate != "1900-01-01"
       ? donghua.startDate
@@ -68,10 +69,14 @@ export default function ShowDetail({ donghua, tags }: ShowDetailProps) {
     );
   });
 
+  const onClickTag = (tagName: string) => {
+    router.push(`/list?searchFilter={"tags": ["${tagName}"]}`);
+  }
+
   const tagList =
     tags.length > 0 ? (
       tags.map((tag) => {
-        return <Tag key={tag.name}>{tag.nameEN}</Tag>;
+        return <Tag key={tag.name} onClick={() => onClickTag(tag.name)}>{tag.nameEN}</Tag>;
       })
     ) : (
       <Typography.Text>No tags ¯\_(˶′◡‵˶)_/¯</Typography.Text>
