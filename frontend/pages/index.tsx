@@ -1,11 +1,12 @@
 import AppLayout from "@/components/AppLayout";
-import { Space } from "antd";
+import { Space, Typography } from "antd";
 import ShowShelf from "@/components/ShowShelf";
 import { SortBy } from "@/types";
 
 export default function Home() {
   return (
     <AppLayout>
+      <Typography.Title level={4} type="secondary">Discover Chinese anime (#｀-_ゝ-)</Typography.Title>
       <Space direction="vertical">
         <ShowShelf
           title="Popular"

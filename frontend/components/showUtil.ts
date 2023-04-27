@@ -55,5 +55,13 @@ export const getDisplaySummary = (donghua: Donghua, limit?: number): string => {
   return htmlStr;
 };
 
+// source: https://stackoverflow.com/questions/3452546/how-do-i-get-the-youtube-video-id-from-a-url
+export const getYouTubeId = (url: string | null) => {
+  if (!url) return false;
+  var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+  var match = url.match(regExp);
+  return (match&&match[7].length==11)? match[7] : false;
+}
+
 export const placeHolderImage =
   "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/White_Persian_Cat.jpg/220px-White_Persian_Cat.jpg";

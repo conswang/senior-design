@@ -1,13 +1,24 @@
 import { Donghua, DonghuaTagCN, Prisma, TagCN } from "@prisma/client";
-import { Col, Row, Space, Image, Typography, Divider, Tag, Statistic } from "antd";
+import {
+  Col,
+  Row,
+  Space,
+  Image,
+  Typography,
+  Divider,
+  Tag,
+  Statistic,
+} from "antd";
 import {
   getDisplayChineseTitle,
   getDisplayPlatform,
   getDisplaySummary,
   getDisplayTitle,
+  getYouTubeId,
   placeHolderImage,
 } from "./showUtil";
 import { useRouter } from "next/router";
+import YouTube from "react-youtube";
 
 interface ShowDetailProps {
   donghua: Donghua;
@@ -71,12 +82,16 @@ export default function ShowDetail({ donghua, tags }: ShowDetailProps) {
 
   const onClickTag = (tagName: string) => {
     router.push(`/list?searchFilter={"tags": ["${tagName}"]}`);
-  }
+  };
 
   const tagList =
     tags.length > 0 ? (
       tags.map((tag) => {
-        return <Tag key={tag.name} onClick={() => onClickTag(tag.name)}>{tag.nameEN}</Tag>;
+        return (
+          <Tag key={tag.name} onClick={() => onClickTag(tag.name)}>
+            {tag.nameEN}
+          </Tag>
+        );
       })
     ) : (
       <Typography.Text>No tags ¯\_(˶′◡‵˶)_/¯</Typography.Text>
@@ -85,6 +100,8 @@ export default function ShowDetail({ donghua, tags }: ShowDetailProps) {
   const synonyms =
     (donghua.otherTitles! as Prisma.JsonArray).join(", ") ||
     `No synonyms ¯\\_(　´∀｀)_/¯`;
+
+  const trailerId = getYouTubeId(donghua.trailerUrl);
 
   return (
     <Space direction="vertical" size="large" style={{ width: "100%" }}>
@@ -119,14 +136,23 @@ export default function ShowDetail({ donghua, tags }: ShowDetailProps) {
                 Synopsis
               </Typography.Title>
               <Typography.Paragraph>{displaySummary}</Typography.Paragraph>
-              <Space size="large" style={{padding: "8px 0"}}>
+              <Space size="large" style={{ padding: "8px 0" }}>
                 <Statistic title="Score" value={donghua.score || "N/A"} />
-                <Statistic title="Scored by" value={donghua.scoreCount || "N/A"}/>
+                <Statistic
+                  title="Scored by"
+                  value={donghua.scoreCount || "N/A"}
+                />
               </Space>
               <Typography.Title level={3}>Tags</Typography.Title>
               <Space wrap>{tagList}</Space>
               <Typography.Title level={3}>Synonyms</Typography.Title>
               <Typography.Text>{synonyms}</Typography.Text>
+              {trailerId && (
+                <>
+                  <Typography.Title level={3}>Trailer</Typography.Title>
+                  <YouTube videoId={trailerId} />
+                </>
+              )}
             </div>
           </Space>
         </Col>
