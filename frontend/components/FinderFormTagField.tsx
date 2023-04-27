@@ -2,22 +2,17 @@ import { TagCN } from "@prisma/client";
 import { Form, Select, Spin, Tag } from "antd";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-const debounce = require('lodash.debounce');
+const debounce = require("lodash.debounce");
 
 export default function FinderFormTagField() {
-  const form = Form.useFormInstance();
-  const formTagField = Form.useWatch("tags");
+  // const form = Form.useFormInstance();
+  // const formTagField = Form.useWatch("tags");
 
-  const [options, setOptions] = useState<TagCN[]>([]);
+  const [options, setOptions] = useState<{ label: string; value: string }[]>(
+    []
+  );
   const [fetching, setFetching] = useState(false);
   const fetchRef = useRef(0);
-
-  const selectOptions = options.map((tagCN) => {
-    return {
-      label: tagCN.nameEN,
-      value: tagCN.name,
-    };
-  });
 
   const debounceFetcher = useMemo(() => {
     const reloadOptions = (searchPrefix: string) => {
@@ -40,13 +35,16 @@ export default function FinderFormTagField() {
             // for fetch callback order
             return;
           }
-  
-          setOptions(data.tags);
-          setFetching(false);
 
-          console.log("Search prefix: " + searchPrefix);
-          console.log("Tags:");
-          console.log(data.tags);
+          const newOptions = data.tags.map((tagCN: TagCN) => {
+            return {
+              label: tagCN.nameEN,
+              value: tagCN.name,
+            };
+          });
+
+          setOptions(newOptions);
+          setFetching(false);
         });
     };
 
@@ -55,11 +53,13 @@ export default function FinderFormTagField() {
 
   return (
     <Select
+      labelInValue
+      filterOption={false}
       placeholder="Add tags"
       showSearch={true}
       onSearch={debounceFetcher}
       mode="multiple"
-      options={selectOptions}
+      options={options}
       notFoundContent={fetching ? <Spin size="small" /> : null}
     />
   );
