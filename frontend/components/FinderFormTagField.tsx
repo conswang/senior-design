@@ -4,7 +4,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 const debounce = require("lodash.debounce");
 
-export default function FinderFormTagField() {
+interface FinderFormTagFieldProps {
+  tagsChangeCallback: (tags: string[]) => void;
+}
+
+export default function FinderFormTagField({
+  tagsChangeCallback,
+}: FinderFormTagFieldProps) {
   // const form = Form.useFormInstance();
   // const formTagField = Form.useWatch("tags");
 
@@ -36,13 +42,14 @@ export default function FinderFormTagField() {
             return;
           }
 
-          const newOptions = data.tags.map((tagCN: TagCN) => {
-            return {
-              label: tagCN.nameEN,
-              value: tagCN.name,
-            };
-          });
-
+          const newOptions: { label: string; value: string }[] = data.tags.map(
+            (tagCN: TagCN) => {
+              return {
+                label: tagCN.nameEN,
+                value: tagCN.name,
+              };
+            }
+          );
           setOptions(newOptions);
           setFetching(false);
         });
@@ -60,6 +67,13 @@ export default function FinderFormTagField() {
       onSearch={debounceFetcher}
       mode="multiple"
       options={options}
+      onChange={(_, options) => {
+        if (Array.isArray(options)) {
+          tagsChangeCallback(options.map(tag => tag.label))
+        } else {
+          console.error("Non-array options");
+        }
+      }}
       notFoundContent={fetching ? <Spin size="small" /> : null}
     />
   );

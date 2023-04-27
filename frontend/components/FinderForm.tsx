@@ -42,7 +42,10 @@ interface FinderFormProps {
   onFinishCallback?: () => void;
 }
 
-export default function FinderForm({ layout, onFinishCallback}: FinderFormProps) {
+export default function FinderForm({
+  layout,
+  onFinishCallback,
+}: FinderFormProps) {
   const router = useRouter();
   const [initialValues, setInitialValues] = useState<FormValues>({
     query: "",
@@ -54,9 +57,9 @@ export default function FinderForm({ layout, onFinishCallback}: FinderFormProps)
     ],
     sortBy: SortBy.BEST_MATCH,
   });
+  const [tags, setTags] = useState<string[]>([]);
 
   const onFinish = (fieldsValue: any) => {
-    // console.log(fieldsValue);
 
     let filter: SearchFilter = {
       query: fieldsValue["query"],
@@ -77,6 +80,7 @@ export default function FinderForm({ layout, onFinishCallback}: FinderFormProps)
       },
       includePlatforms: fieldsValue["platform"],
       sortBy: fieldsValue["sort-by"],
+      tags,
     };
     onFinishCallback && onFinishCallback();
 
@@ -127,8 +131,8 @@ export default function FinderForm({ layout, onFinishCallback}: FinderFormProps)
       <Form.Item label="Query" name="query" initialValue={initialValues.query}>
         <Input />
       </Form.Item>
-      <Form.Item label="Tags" name="tags">
-        <FinderFormTagField/>
+      <Form.Item label="Tags">
+        <FinderFormTagField tagsChangeCallback={setTags}/>
       </Form.Item>
       <Form.Item label="Air date" name="air-date">
         <DatePicker.RangePicker defaultValue={initialValues.airDate} />
