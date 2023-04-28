@@ -108,6 +108,9 @@ export default function ShowDetail({
     `No synonyms ¯\\_(　´∀｀)_/¯`;
 
   const trailerId = getYouTubeId(donghua.trailerUrl);
+  const recommendedShows = recommendations.map((show) => {
+    return <ShowCard donghua={show} key={show.id} cardSize={150} />;
+  });
 
   return (
     <Space direction="vertical" size="large" style={{ width: "100%" }}>
@@ -121,7 +124,7 @@ export default function ShowDetail({
         )}`}</Typography.Text>
       </div>
       <Row>
-        <Col span={6}>
+        <Col xl={6} sm={24}>
           <Image
             src={donghua.imageUrl || placeHolderImage}
             width={225}
@@ -132,7 +135,7 @@ export default function ShowDetail({
             {leftColumnElements}
           </Space>
         </Col>
-        <Col span={18}>
+        <Col xl={18} sm={24}>
           <Space
             direction="vertical"
             style={{ width: "100%", padding: "0 24px" }}
@@ -162,11 +165,7 @@ export default function ShowDetail({
               {recommendations.length > 0 && (
                 <>
                   <Typography.Title level={3}>Similar Shows</Typography.Title>
-                  <Space direction="horizontal">
-                    {recommendations.map((show) => {
-                      return <ShowCard donghua={show} key={donghua.id} cardSize={150}/>;
-                    })}
-                  </Space>
+                  <Space direction="horizontal">{recommendedShows}</Space>
                 </>
               )}
             </div>
