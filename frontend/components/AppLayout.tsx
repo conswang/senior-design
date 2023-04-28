@@ -45,7 +45,7 @@ export default function AppLayout({ children }: LayoutProps) {
           ]}
         />
       </Layout.Header>
-      <Layout.Content style={{ padding: "0 20%", paddingBottom: "24px" }}>
+      <Layout.Content style={{ padding: "0 20%", paddingBottom: "64px" }}>
         {children}
       </Layout.Content>
     </Layout>

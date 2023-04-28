@@ -19,13 +19,19 @@ import {
 } from "./showUtil";
 import { useRouter } from "next/router";
 import YouTube from "react-youtube";
+import ShowCard from "./ShowCard";
 
 interface ShowDetailProps {
   donghua: Donghua;
+  recommendations: Donghua[];
   tags: TagCN[];
 }
 
-export default function ShowDetail({ donghua, tags }: ShowDetailProps) {
+export default function ShowDetail({
+  donghua,
+  tags,
+  recommendations,
+}: ShowDetailProps) {
   const displayTitle = getDisplayTitle(donghua);
   const displaySummary = getDisplaySummary(donghua);
   const router = useRouter();
@@ -151,6 +157,16 @@ export default function ShowDetail({ donghua, tags }: ShowDetailProps) {
                 <>
                   <Typography.Title level={3}>Trailer</Typography.Title>
                   <YouTube videoId={trailerId} />
+                </>
+              )}
+              {recommendations.length > 0 && (
+                <>
+                  <Typography.Title level={3}>Similar Shows</Typography.Title>
+                  <Space direction="horizontal">
+                    {recommendations.map((show) => {
+                      return <ShowCard donghua={show} key={donghua.id} cardSize={150}/>;
+                    })}
+                  </Space>
                 </>
               )}
             </div>

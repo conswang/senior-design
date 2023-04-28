@@ -9,11 +9,11 @@ import {
 
 interface ShowCardProps {
   donghua: Donghua;
+  cardSize?: number;
 }
 
-export default function ShowCard({ donghua }: ShowCardProps) {
+export default function ShowCard({ donghua, cardSize = 250 }: ShowCardProps) {
   const displayTitle = getDisplayTitle(donghua);
-  const displaySummary = getDisplaySummary(donghua, 200);
 
   return (
     <div style={{ position: "relative", textAlign: "center" }}>
@@ -21,7 +21,7 @@ export default function ShowCard({ donghua }: ShowCardProps) {
         <Image
           src={donghua.imageUrl || placeHolderImage}
           preview={false}
-          height={250}
+          height={cardSize}
         />
         <div
           style={{
