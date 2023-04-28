@@ -1,6 +1,8 @@
-# Senior Design
+# Donghua DB
 
-Here lies my senior design project of Spring 2023. [Live online here](https://senior-design.vercel.app/).
+This is Donghua DB, a database dedicated to Chinese anime (donghua). It combines English and machine translated Chinese language data sources to come up with a more comprehensive set of shows and features including search and filter, ranking, tagging, and recommendations.
+
+[Live online here](https://senior-design.vercel.app/).
 
 ### Usage
 
